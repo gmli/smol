@@ -5,6 +5,13 @@ Module principal pour la console SMOL.
 
 Aucune idée de comment je souhaite mon API pour le moment. À définir.
 
+TODO : tout réécrire en fonctionnel ? Façon gamebuino ou pico8. Avec un :
+
+> import smol
+
+On aurait l'écran initialisé. Ensuite quelques fonctions pour aider et voilà.
+Quelques objects (SMOLWorld ?) pour gérer les sprites/layers/scènes/etc.
+
 """
 
 import st7735
@@ -13,6 +20,11 @@ import framebuf
 from machine import Pin, SPI, Signal
 
 black = rgb.color565(0,0,0)
+
+spi = SPI(1, baudrate=59000000, polarity=0, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(12)) 
+display = st7735.ST7735R(spi, dc=Pin(19), cs=Pin(18), rst=Pin(5), width=130, height=130)
+
+
 
 class SMOL(object):
 
@@ -29,12 +41,11 @@ class SMOL(object):
     """
 
     def __init__(self):
-        self.spi = SPI(1, baudrate=59000000, polarity=0, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(12)) 
-        self.display = st7735.ST7735R(self.spi, dc=Pin(19), cs=Pin(18), rst=Pin(5), width=130, height=130)
+        
         self.fb = framebuf.FrameBuffer(bytearray(130*130*2), 130, 130, framebuf.RGB565)
         self.fb.fill_rect(0, 0, 130, 130, black) # voir pour les valeurs 130 <-> 128
 
-        self.display.fill(black)
+        display.fill(black)
         # À ce moment SMOL() affiche un écran noir.
 
 
@@ -57,6 +68,6 @@ class SMOL(object):
         """
         Blit du framebuffer entier sur l'écran via SPI.
         """
-        self.display.blit_buffer(self.fb, 0,0, 130,130)
+        display.blit_buffer(self.fb, 0,0, 130,130)
             
 
