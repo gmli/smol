@@ -13,11 +13,15 @@ import framebuf
 from machine import Pin, SPI, Signal
 
 
-black = rgb.color565(0,0,0)
+BLACK = rgb.color565(0,0,0)
 
 spi = SPI(1, baudrate=59000000, polarity=0, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(12)) 
 framebuffer = framebuf.FrameBuffer(bytearray(130*130*2), 130, 130, framebuf.RGB565)
-framebuffer.fill_rect(0, 0, 130, 130, black) # voir pour les valeurs 130 <-> 128
+framebuffer.fill_rect(0, 0, 130, 130, BLACK) # voir pour les valeurs 130 <-> 128
+
+left  = Signal(4, Pin.IN, Pin.PULL_UP, invert=True)
+right = Signal(15, Pin.IN, Pin.PULL_UP, invert=True)
+button_a = Signal(22, Pin.IN, Pin.PULL_UP, invert=True)
 
 class Display(st7735.ST7735R):
 
@@ -31,7 +35,7 @@ class Display(st7735.ST7735R):
         self.blit_buffer(framebuffer, 0,0, 130,130)
 
 display = Display()
-display.fill(black)
+display.fill(BLACK)
 
 
 def sprite(sprite_filename, width, height):
