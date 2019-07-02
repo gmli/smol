@@ -14,6 +14,7 @@ from machine import Pin, SPI, Signal
 
 
 BLACK = rgb.color565(0,0,0)
+RED = rgb.color565(255,0,0)
 
 spi = SPI(1, baudrate=59000000, polarity=0, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(12)) 
 framebuffer = framebuf.FrameBuffer(bytearray(130*130*2), 130, 130, framebuf.RGB565)
@@ -28,11 +29,14 @@ class Display(st7735.ST7735R):
     def __init__(self):
         super().__init__(spi, dc=Pin(19), cs=Pin(18), rst=Pin(5), width=130, height=130)
 
-    def draw_sprite(self, sprite, x, y):
-        framebuffer.blit(sprite, x, y)
+    def draw_sprite(self, sprite, x, y, transparency_color=-1):
+        framebuffer.blit(sprite, x, y, transparency_color)
+
+    def clear(self):
+        framebuffer.fill(0)
 
     def refresh(self):
-        self.blit_buffer(framebuffer, 0,0, 130,130)
+        self.blit_buffer(framebuffer, 0, 0, 130, 130)
 
 display = Display()
 display.fill(BLACK)
@@ -47,3 +51,13 @@ def sprite(sprite_filename, width, height):
             return framebuf.FrameBuffer(bytearray(list(sprite_buf)), width, height, framebuf.RGB565)
 
 
+def collide_rect(pad_x,pad_y,pad_width,pad_height,
+                  player_x,player_y,player_width,player_height):
+
+    if (float(pad_x) < float(player_x) + float(player_width) and
+            float(pad_x) + float(pad_width) > float(player_x) and
+            float(pad_y) < float(player_y) + float(player_height) and
+            float(pad_height) + float(pad_y) > float(player_y)):
+        return True
+    else:
+        return False
