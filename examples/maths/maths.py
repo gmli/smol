@@ -1,13 +1,11 @@
 # coding: utf-8
 
-import smol
+from smol import display, sprite
 
-sl = smol.SMOL()
+classroom = sprite("background", 128, 128)
 
-classroom = sl.make_sprite("background", 128, 128)
-
-sl.draw_sprite(classroom, 0, 0)
-sl.draw()
+display.draw_sprite(classroom, 0, 0)
+display.refresh()
 
 
 
